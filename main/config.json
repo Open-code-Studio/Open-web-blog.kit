@@ -40,5 +40,29 @@
         ]
       }
     ]
+  },
+  "links": {
+    "title": "🔗 友情链接",
+    "description": "一些值得推荐的朋友和站点。欢迎交换友链！",
+    "items": [
+      {
+        "name": "GitHub",
+        "desc": "全球最大的代码托管平台",
+        "url": "https://github.com",
+        "icon": "github"
+      },
+      {
+        "name": "MDN Web Docs",
+        "desc": "权威的前端开发文档",
+        "url": "https://developer.mozilla.org",
+        "icon": "code"
+      },
+      {
+        "name": "Material Design 3",
+        "desc": "Google MD3 设计系统",
+        "url": "https://m3.material.io",
+        "icon": "design"
+      }
+    ]
   }
 }

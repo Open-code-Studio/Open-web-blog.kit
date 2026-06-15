@@ -84,36 +84,10 @@
 
   <main class="main-content main-content--full">
     <div class="page-container">
-      <h1 class="page-title">🔗 友情链接</h1>
-      <p class="page-desc">一些值得推荐的朋友和站点。欢迎交换友链！</p>
-      <div class="link-grid">
-        <a href="https://github.com" target="_blank" rel="noopener" class="link-card">
-          <div class="link-card__avatar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-          </div>
-          <div class="link-card__info">
-            <div class="link-card__name">GitHub</div>
-            <div class="link-card__desc">全球最大的代码托管平台</div>
-          </div>
-        </a>
-        <a href="https://developer.mozilla.org" target="_blank" rel="noopener" class="link-card">
-          <div class="link-card__avatar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-          </div>
-          <div class="link-card__info">
-            <div class="link-card__name">MDN Web Docs</div>
-            <div class="link-card__desc">权威的前端开发文档</div>
-          </div>
-        </a>
-        <a href="https://m3.material.io" target="_blank" rel="noopener" class="link-card">
-          <div class="link-card__avatar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
-          </div>
-          <div class="link-card__info">
-            <div class="link-card__name">Material Design 3</div>
-            <div class="link-card__desc">Google MD3 设计系统</div>
-          </div>
-        </a>
+      <h1 class="page-title" id="linksTitle">🔗 友情链接</h1>
+      <p class="page-desc" id="linksDesc">加载中...</p>
+      <div class="link-grid" id="linkGrid">
+        <!-- Dynamically populated from config.json -->
       </div>
     </div>
 
@@ -123,5 +97,35 @@
   </main>
 
   <script src="js/theme.js"></script>
+  <script>
+    (function() {
+      const icons = {
+        github: '<path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>',
+        code: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
+        design: '<polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/>',
+        home: '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+        book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+        globe: '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>'
+      };
+      fetch('config.json').then(r => r.json()).then(cfg => {
+        const links = cfg.links;
+        if (!links) return;
+        if (links.title) document.getElementById('linksTitle').textContent = links.title;
+        if (links.description) document.getElementById('linksDesc').textContent = links.description;
+        const items = links.items || [];
+        document.getElementById('linkGrid').innerHTML = items.map(item => `
+          <a href="${item.url}" target="_blank" rel="noopener" class="link-card">
+            <div class="link-card__avatar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${icons[item.icon] || icons.globe}</svg>
+            </div>
+            <div class="link-card__info">
+              <div class="link-card__name">${item.name}</div>
+              <div class="link-card__desc">${item.desc || ''}</div>
+            </div>
+          </a>
+        `).join('');
+      }).catch(() => {});
+    })();
+  </script>
 </body>
 </html>
