@@ -1,6 +1,11 @@
 /* ============================================
    Blog Home Page Styles
    ============================================ */
+   
+/* Override content-wrapper flex direction for home page */
+#homeView {
+  flex-direction: column;
+}
 
 /* === Hero Section === */
 .blog-hero {
