@@ -1,0 +1,159 @@
+/* ============================================
+   Floating Nav Bar - Rounded Pill, Detached
+   ============================================ */
+
+.floating-nav {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 110;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  background-color: var(--md-sys-color-surface-container-high);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--md-sys-shape-extra-large);
+  box-shadow: var(--md-sys-elevation-3);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  max-width: calc(100vw - 32px);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.floating-nav::-webkit-scrollbar { height: 0; }
+
+/* Nav brand (left side) */
+.floating-nav__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 14px 4px 8px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.floating-nav__brand:hover {
+  text-decoration: none;
+}
+
+.floating-nav__brand-icon svg {
+  display: block;
+}
+
+.floating-nav__brand-name {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--md-sys-color-on-surface);
+  background: linear-gradient(135deg, var(--md-sys-color-primary), #7FC8F8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+}
+
+/* Divider */
+.floating-nav__divider {
+  width: 1px;
+  height: 24px;
+  background-color: var(--md-sys-color-outline-variant);
+  flex-shrink: 0;
+}
+
+/* Nav links (middle) */
+.floating-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.floating-nav__link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--md-sys-shape-full);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.floating-nav__link:hover {
+  background-color: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+  text-decoration: none;
+}
+
+.floating-nav__link.active {
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+.floating-nav__link svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* Nav end (right side) */
+.floating-nav__end {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding-left: 4px;
+}
+
+.floating-nav .icon-button {
+  width: 36px;
+  height: 36px;
+}
+
+/* Page body offset for floating nav */
+body.has-floating-nav {
+  padding-top: 88px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Mobile: compact nav */
+@media (max-width: 768px) {
+  .floating-nav {
+    top: 10px;
+    padding: 4px 6px;
+    gap: 2px;
+  }
+
+  body.has-floating-nav {
+    padding-top: 72px;
+  }
+
+  .floating-nav__brand-name {
+    display: none;
+  }
+
+  .floating-nav__link {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .floating-nav__link svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .floating-nav__brand {
+    padding: 4px 8px 4px 4px;
+  }
+
+  .floating-nav__divider {
+    margin: 0 2px;
+  }
+}

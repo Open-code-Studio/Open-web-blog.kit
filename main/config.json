@@ -1,0 +1,62 @@
+{
+  "site": {
+    "name": "Open Web Blog",
+    "titleSuffix": "博客",
+    "meta": "记录技术思考，分享编程心得",
+    "docDir": "../page",
+    "themeColor": "#4AA26F"
+  },
+  "nav": [
+    {
+      "route": "/hi",
+      "file": "hi!.md",
+      "title": "👋 Hi! 欢迎来到我的博客",
+      "date": "2026-06-15",
+      "icon": "home",
+      "tags": ["博客", "随笔"],
+      "excerpt": "这是我的第一篇博客文章！使用 Material Design 3 风格构建的简洁博客站点，支持深色/浅色主题切换和 Markdown 写作。"
+    },
+    {
+      "route": "/md3-guide",
+      "file": "hi!.md",
+      "title": "🎨 Material Design 3 设计指南",
+      "date": "2026-06-14",
+      "icon": "book",
+      "tags": ["设计", "前端"],
+      "excerpt": "深入了解 Material Design 3 的设计理念，包括动态色彩系统、组件规范、以及如何在 Web 项目中实践 MD3 风格。"
+    },
+    {
+      "route": "/js-tips",
+      "file": "hi!.md",
+      "title": "⚡ JavaScript 实用技巧合集",
+      "date": "2026-06-10",
+      "icon": "code",
+      "tags": ["JavaScript", "技巧"],
+      "excerpt": "整理了一些日常开发中常用的 JavaScript 技巧和最佳实践，涵盖 ES2023+ 新特性、异步编程、性能优化等。"
+    }
+  ],
+  "sidebarLinks": [],
+  "about": {
+    "description": "一个简约、优雅的开源技术博客，基于 Material Design 3 构建。",
+    "sections": [
+      {
+        "title": "🧑‍💻 关于作者",
+        "text": "一个热爱技术与写作的开发者。这里记录着我的学习笔记、技术心得和生活中的思考。希望通过写作与更多人交流想法，共同成长。"
+      },
+      {
+        "title": "🎨 设计理念",
+        "text": "本站采用 Google Material Design 3 设计系统，支持深色/浅色主题自动切换。所有文章使用 Markdown 编写，简洁高效。"
+      },
+      {
+        "title": "🛠 技术栈",
+        "tags": ["HTML5", "CSS3", "JavaScript", "Material Design 3", "Marked.js", "Highlight.js"]
+      },
+      {
+        "title": "📬 联系方式",
+        "links": [
+          { "label": "GitHub", "url": "https://github.com" }
+        ]
+      }
+    ]
+  }
+}
