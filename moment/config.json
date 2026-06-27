@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "title": "📸 瞬间",
+  "description": "记录生活中的每一个瞬间，最多100字 + 10张图",
+  "moments": [
+    {
+      "id": "1",
+      "text": "今天用 Material Design 3 重构了博客，效果很棒！深色模式和动画过渡都很流畅 ✨",
+      "date": "2026-06-27",
+      "images": []
+    }
+  ]
+}

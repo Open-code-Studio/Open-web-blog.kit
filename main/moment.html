@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open Web Blog - 瞬间</title>
+  <meta name="description" content="生活中的每一个瞬间">
+
+  <link rel="preconnect" href="https://fonts.loli.net">
+  <link rel="preconnect" href="https://gstatic.loli.net" crossorigin>
+
+  <link href="https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/nav.css">
+  <link rel="stylesheet" href="css/transitions.css">
+  <link rel="stylesheet" href="css/moments.css">
+
+  <style>
+    .moment-page-container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+    }
+
+    .moment-page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--md-sys-color-on-surface);
+      margin-bottom: 4px;
+    }
+
+    .moment-page-desc {
+      font-size: 14px;
+      color: var(--md-sys-color-on-surface-variant);
+      margin-bottom: 32px;
+    }
+
+    /* Vertical timeline card */
+    .moment-item {
+      padding: 24px 28px;
+      border-radius: var(--md-sys-shape-large);
+      background-color: var(--md-sys-color-surface-container-low);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      margin-bottom: 16px;
+      transition: all 0.2s ease;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .moment-item:hover {
+      background-color: var(--md-sys-color-surface-container);
+      border-color: var(--md-sys-color-primary);
+      box-shadow: var(--md-sys-elevation-1);
+    }
+
+    .moment-item__header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .moment-item__header svg {
+      width: 15px;
+      height: 15px;
+      opacity: 0.65;
+    }
+
+    .moment-item__text {
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--md-sys-color-on-surface);
+      margin-bottom: 14px;
+      word-break: break-word;
+    }
+
+    /* Image grid in timeline cards */
+    .moment-item__images {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .moment-item__images--1 { grid-template-columns: 1fr; }
+    .moment-item__images--2 { grid-template-columns: 1fr 1fr; }
+    .moment-item__images--3 { grid-template-columns: 1fr 1fr 1fr; }
+    .moment-item__images--4 { grid-template-columns: 1fr 1fr; }
+    .moment-item__images--many { grid-template-columns: repeat(3, 1fr); }
+
+    .moment-item__img {
+      width: 100%;
+      height: auto;
+      border-radius: var(--md-sys-shape-medium);
+      display: block;
+      min-height: 60px;
+      background-color: var(--md-sys-color-surface-container-highest);
+    }
+
+    .moment-item__img-placeholder {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--md-sys-color-surface-container-highest);
+      border-radius: var(--md-sys-shape-medium);
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .moment-empty {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .moment-empty svg {
+      opacity: 0.4;
+      margin-bottom: 16px;
+    }
+
+    .moment-empty h3 {
+      font-size: 1.15rem;
+      color: var(--md-sys-color-on-surface);
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .moment-item {
+        padding: 18px 20px;
+      }
+    }
+  </style>
+</head>
+<body class="has-floating-nav">
+
+  <!-- Floating Nav Bar -->
+  <nav class="floating-nav" id="floatingNav">
+    <a href="index.html" class="floating-nav__brand">
+      <span class="floating-nav__brand-icon">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="var(--md-sys-color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+      </span>
+      <span class="floating-nav__brand-name">Open Web Blog</span>
+    </a>
+    <span class="floating-nav__divider"></span>
+    <div class="floating-nav__links">
+      <span class="nav-slider"></span>
+      <a href="index.html" class="floating-nav__link">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        首页
+      </a>
+      <a href="page.html" class="floating-nav__link">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        文章
+      </a>
+      <a href="moment.html" class="floating-nav__link active">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        瞬间
+      </a>
+      <a href="link.html" class="floating-nav__link">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        友链
+      </a>
+      <a href="about.html" class="floating-nav__link">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        关于
+      </a>
+    </div>
+    <span class="floating-nav__divider"></span>
+    <div class="floating-nav__end">
+      <button class="icon-button" id="themeToggle" aria-label="切换主题">
+        <svg viewBox="0 0 24 24" width="24" height="24" id="themeIcon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content main-content--full">
+    <div class="moment-page-container">
+      <h1 class="moment-page-title" id="momentsPageTitle">📸 瞬间</h1>
+      <p class="moment-page-desc" id="momentsPageDesc">记录生活中的每一个瞬间</p>
+
+      <div id="momentsPageList">
+        <div class="loading-state"><div class="loading-spinner"></div><p>加载瞬间...</p></div>
+      </div>
+    </div>
+
+    <footer class="blog-footer">
+      <p>Built with ❤️ using Material Design 3</p>
+    </footer>
+  </main>
+
+  <button class="fab" id="scrollTop" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+  </button>
+
+  <script src="js/transitions.js"></script>
+  <script src="js/lightbox.js"></script>
+  <script>
+    (function() {
+      'use strict';
+
+      const $ = (sel) => document.querySelector(sel);
+      const themeToggle = $('#themeToggle');
+      const themeIcon = $('#themeIcon');
+      const scrollTopBtn = $('#scrollTop');
+
+      // Theme
+      function getPreferredTheme() {
+        const stored = localStorage.getItem('owb-theme');
+        if (stored) return stored;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      function setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('owb-theme', theme);
+        const isDark = theme === 'dark';
+        if (themeIcon) themeIcon.innerHTML = isDark
+          ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
+          : '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+      }
+      setTheme(getPreferredTheme());
+      themeToggle.addEventListener('click', () => {
+        const html = document.documentElement;
+        html.classList.add('transitioning');
+        setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        setTimeout(() => html.classList.remove('transitioning'), 300);
+      });
+
+      // Scroll
+      window.addEventListener('scroll', () => { scrollTopBtn.classList.toggle('visible', window.scrollY > 300); }, { passive: true });
+      scrollTopBtn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+      // Image fallback
+      const FALLBACK_ICON = '<svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+
+      function escapeHtml(text) {
+        const d = document.createElement('div');
+        d.textContent = text || '';
+        return d.innerHTML;
+      }
+
+      function getImagesClass(count) {
+        if (count === 1) return 'moment-item__images--1';
+        if (count === 2) return 'moment-item__images--2';
+        if (count === 3) return 'moment-item__images--3';
+        if (count === 4) return 'moment-item__images--4';
+        return 'moment-item__images--many';
+      }
+
+      function renderMomentItem(moment) {
+        let text = (moment.text || '').trim();
+        if (text.length > 100) text = text.slice(0, 99) + '…';
+
+        const images = (moment.images || []).slice(0, 10);
+        let imagesHTML = '';
+        if (images.length) {
+          const cls = getImagesClass(images.length);
+          const imgs = images.map(img => {
+            const src = img.startsWith('http') ? img : `../moment/images/${img}`;
+            return `<img class="moment-item__img" src="${escapeHtml(src)}" alt="" loading="lazy">`;
+          }).join('');
+          imagesHTML = `<div class="moment-item__images ${cls}">${imgs}</div>`;
+        }
+
+        return `
+          <div class="moment-item">
+            <div class="moment-item__header">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span>${escapeHtml(moment.date || '')}</span>
+            </div>
+            <div class="moment-item__text">${escapeHtml(text)}</div>
+            ${imagesHTML}
+          </div>`;
+      }
+
+      async function load() {
+        try {
+          const resp = await fetch('../moment/config.json');
+          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+          const cfg = await resp.json();
+          if (!cfg.enabled) {
+            $('#momentsPageList').innerHTML = '<div class="moment-empty"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><h3>瞬间功能未开启</h3><p>请在 moment/config.json 中启用</p></div>';
+            return;
+          }
+
+          if (cfg.title) $('#momentsPageTitle').textContent = cfg.title;
+          if (cfg.description) $('#momentsPageDesc').textContent = cfg.description;
+
+          const moments = cfg.moments || [];
+          if (!moments.length) {
+            $('#momentsPageList').innerHTML = '<div class="moment-empty"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><h3>暂无瞬间</h3><p>还没有发布任何瞬间</p></div>';
+            return;
+          }
+
+          const sorted = [...moments].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+          $('#momentsPageList').innerHTML = sorted.map(m => renderMomentItem(m)).join('');
+
+          // Delegate image error handling — avoids complex inline onerror escaping issues
+          $('#momentsPageList').addEventListener('error', function(e) {
+            const img = e.target;
+            if (img.classList && img.classList.contains('moment-item__img')) {
+              const placeholder = document.createElement('div');
+              placeholder.className = 'moment-item__img-placeholder';
+              placeholder.innerHTML = FALLBACK_ICON;
+              img.replaceWith(placeholder);
+            }
+          }, true);
+        } catch (e) {
+          $('#momentsPageList').innerHTML = `<div class="moment-empty"><h3>加载失败</h3><p>${escapeHtml(e.message)}</p></div>`;
+        }
+      }
+
+      load();
+    })();
+  </script>
+</body>
+</html>

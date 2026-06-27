@@ -8,7 +8,7 @@
   const STAGGER_BASE = 80;   // ms base delay between stagger items
 
   // Page order for determining slide direction
-  const PAGE_ORDER = ['index.html', 'page.html', 'link.html', 'about.html'];
+  const PAGE_ORDER = ['index.html', 'page.html', 'moment.html', 'link.html', 'about.html'];
 
   // Check if this is a fresh page load (not bfcache restore)
   let isFreshLoad = true;
@@ -146,6 +146,8 @@
     '.post-card',
     '.link-card',
     '.about-card',
+    '.moment-item',
+    '.moment-card',
   ];
 
   // === Stagger: fade in sections/cards one by one ===

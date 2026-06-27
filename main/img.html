@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图片查看 - Open Web Blog</title>
+
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/transitions.css">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #000;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    #viewer {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #viewer.dragging { cursor: grabbing; }
+    #viewer.zoomed { cursor: grab; }
+
+    #mainImage {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      transition: transform 0.15s ease-out;
+      will-change: transform;
+      pointer-events: none;
+    }
+
+    #mainImage.zoomable {
+      transition: none;
+      pointer-events: auto;
+    }
+
+    /* Top bar */
+    #topBar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      pointer-events: none;
+    }
+
+    #topBar > * { pointer-events: auto; }
+
+    #backBtn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    #backBtn:hover { background: rgba(255,255,255,0.22); }
+
+    #backBtn svg { width: 18px; height: 18px; }
+
+    /* Bottom bar */
+    #bottomBar {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .zoom-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 22px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+      line-height: 1;
+    }
+
+    .zoom-btn:hover { background: rgba(255,255,255,0.25); }
+    .zoom-btn:active { background: rgba(255,255,255,0.35); }
+
+    #zoomLevel {
+      color: #fff;
+      font-size: 13px;
+      min-width: 48px;
+      text-align: center;
+      font-weight: 500;
+      opacity: 0.8;
+    }
+
+    /* Loading */
+    #loading {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Error */
+    #errorMsg {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: rgba(255,255,255,0.7);
+      z-index: 6;
+      pointer-events: none;
+    }
+
+    #errorMsg svg { margin-bottom: 12px; opacity: 0.5; }
+
+    /* Animations */
+    #topBar, #bottomBar {
+      opacity: 0;
+      animation: fadeIn 0.3s 0.1s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    #topBar.auto-hide { opacity: 0; transition: opacity 0.2s; }
+    #bottomBar.auto-hide { opacity: 0; transition: opacity 0.2s; }
+  </style>
+</head>
+<body>
+
+  <div id="loading"><div class="spinner"></div>加载图片...</div>
+  <div id="errorMsg">
+    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span id="errorText">图片加载失败</span>
+  </div>
+
+  <div id="topBar">
+    <button id="backBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      返回
+    </button>
+  </div>
+
+  <div id="viewer">
+    <img id="mainImage" src="" alt="">
+  </div>
+
+  <div id="bottomBar">
+    <button class="zoom-btn" id="zoomOut" title="缩小">−</button>
+    <span id="zoomLevel">100%</span>
+    <button class="zoom-btn" id="zoomIn" title="放大">+</button>
+    <button class="zoom-btn" id="zoomReset" title="重置" style="font-size:14px;">1:1</button>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+
+      const $ = s => document.querySelector(s);
+      const img = $('#mainImage');
+      const viewer = $('#viewer');
+      const loading = $('#loading');
+      const errorMsg = $('#errorMsg');
+      const errorText = $('#errorText');
+      const zoomLevel = $('#zoomLevel');
+      const topBar = $('#topBar');
+      const bottomBar = $('#bottomBar');
+
+      const REF_KEY = '__imgViewerRef';
+      const MIN_ZOOM = 0.1;
+      const MAX_ZOOM = 5;
+      let scale = 1;
+      let panX = 0, panY = 0;
+    let isDragging = false;
+    let didDrag = false;      // true if mouse moved > threshold during this gesture
+    let dragStartX = 0, dragStartY = 0;
+    let panStartX = 0, panStartY = 0;
+
+      // === Get image source and referrer from URL ===
+      function getParams() {
+        const hash = window.location.hash.slice(1);
+        const params = {};
+        hash.split('&').forEach(pair => {
+          const [k, v] = pair.split('=');
+          if (k) params[decodeURIComponent(k)] = decodeURIComponent(v || '');
+        });
+        return params;
+      }
+
+      // === Update transform ===
+      function updateTransform() {
+        img.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+        zoomLevel.textContent = Math.round(scale * 100) + '%';
+        viewer.className = scale > 1 ? 'zoomed' : '';
+      }
+
+      // === Zoom ===
+      function zoomTo(newScale, cx, cy) {
+        const oldScale = scale;
+        scale = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newScale));
+
+        if (cx !== undefined && cy !== undefined) {
+          // Zoom toward cursor position
+          const ratio = scale / oldScale;
+          panX = cx - ratio * (cx - panX);
+          panY = cy - ratio * (cy - panY);
+        }
+
+        // Clamp pan when zoomed out
+        if (scale <= 1) {
+          panX = 0;
+          panY = 0;
+        }
+
+        updateTransform();
+      }
+
+      // === Pan ===
+      function startDrag(e) {
+        didDrag = false;
+        dragStartX = e.clientX || e.touches?.[0]?.clientX || 0;
+        dragStartY = e.clientY || e.touches?.[0]?.clientY || 0;
+        if (scale <= 1) return;
+        e.preventDefault();
+        isDragging = true;
+        panStartX = panX;
+        panStartY = panY;
+        viewer.classList.add('dragging');
+      }
+
+      function doDrag(e) {
+        const cx = e.clientX || e.touches?.[0]?.clientX || 0;
+        const cy = e.clientY || e.touches?.[0]?.clientY || 0;
+        if (Math.abs(cx - dragStartX) > 5 || Math.abs(cy - dragStartY) > 5) {
+          didDrag = true;
+        }
+        if (!isDragging) return;
+        panX = panStartX + (cx - dragStartX);
+        panY = panStartY + (cy - dragStartY);
+        updateTransform();
+      }
+
+      function endDrag() {
+        isDragging = false;
+        viewer.classList.remove('dragging');
+      }
+
+      // === Auto-hide controls ===
+      let hideTimer;
+      function showControls() {
+        topBar.classList.remove('auto-hide');
+        bottomBar.classList.remove('auto-hide');
+        clearTimeout(hideTimer);
+        if (scale <= 1) {
+          hideTimer = setTimeout(() => {
+            topBar.classList.add('auto-hide');
+            bottomBar.classList.add('auto-hide');
+          }, 3000);
+        }
+      }
+
+      // === Load image ===
+      function loadImage(src) {
+        if (!src) {
+          showError('未指定图片');
+          return;
+        }
+
+        // Normalize: handle both relative and absolute URLs
+        const fullSrc = src.startsWith('http') ? src : src;
+
+        loading.style.display = 'flex';
+        errorMsg.style.display = 'none';
+        scale = 1;
+        panX = 0;
+        panY = 0;
+
+        img.src = fullSrc;
+        img.onload = () => {
+          loading.style.display = 'none';
+          updateTransform();
+          showControls();
+          document.title = '图片查看 - Open Web Blog';
+        };
+        img.onerror = () => {
+          showError('图片加载失败');
+        };
+      }
+
+      function showError(msg) {
+        loading.style.display = 'none';
+        errorMsg.style.display = 'flex';
+        errorText.textContent = msg;
+      }
+
+      // === Close / Go Back ===
+      function goBack() {
+        const ref = sessionStorage.getItem(REF_KEY);
+        if (ref) {
+          sessionStorage.removeItem(REF_KEY);
+          window.location.href = ref;
+        } else {
+          // Fallback: try referrer or homepage
+          if (document.referrer) {
+            window.location.href = document.referrer;
+          } else {
+            window.location.href = 'index.html';
+          }
+        }
+      }
+
+      // === Event bindings ===
+      // Close: only via back button or Escape key
+      // (click-on-background removed to avoid accidental closes)
+      $('#backBtn').addEventListener('click', goBack);
+
+      // Keyboard
+      document.addEventListener('keydown', (e) => {
+        switch (e.key) {
+          case 'Escape': goBack(); break;
+          case '+': case '=': zoomTo(scale + 0.25, window.innerWidth/2, window.innerHeight/2); showControls(); break;
+          case '-': zoomTo(scale - 0.25, window.innerWidth/2, window.innerHeight/2); showControls(); break;
+          case '0': zoomTo(1); showControls(); break;
+        }
+      });
+
+      // Zoom buttons
+      $('#zoomIn').addEventListener('click', () => { zoomTo(scale + 0.25, window.innerWidth/2, window.innerHeight/2); showControls(); });
+      $('#zoomOut').addEventListener('click', () => { zoomTo(scale - 0.25, window.innerWidth/2, window.innerHeight/2); showControls(); });
+      $('#zoomReset').addEventListener('click', () => { zoomTo(1); showControls(); });
+
+      // Mouse wheel zoom
+      viewer.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        zoomTo(scale + delta, e.clientX, e.clientY);
+        showControls();
+      }, { passive: false });
+
+      // Drag/pan
+      viewer.addEventListener('mousedown', startDrag);
+      viewer.addEventListener('touchstart', startDrag, { passive: false });
+      window.addEventListener('mousemove', doDrag);
+      window.addEventListener('touchmove', doDrag, { passive: false });
+      window.addEventListener('mouseup', endDrag);
+      window.addEventListener('touchend', endDrag);
+
+      // Show controls on mouse move
+      document.addEventListener('mousemove', () => showControls());
+
+      // === Init ===
+      const params = getParams();
+      loadImage(params.src || '');
+    })();
+  </script>
+</body>
+</html>

@@ -207,23 +207,41 @@
 
       let md = preprocessMarkdown(rawText);
       const renderer = new marked.Renderer();
-      renderer.heading = function({ text, depth }) {
-        const slug = text.toLowerCase().replace(/[^\w\u4e00-\u9fff]+/g, '-').replace(/^-+|-+$/g, '');
+      renderer.heading = function({ tokens, depth }) {
+        const text = this.parser.parseInline(tokens);
+        const slug = text.replace(/<[^>]*>/g, '').toLowerCase().replace(/[^\w\u4e00-\u9fff]+/g, '-').replace(/^-+|-+$/g, '');
         return `<h${depth} id="${slug}"><a class="heading-anchor" href="#${slug}" aria-hidden="true">#</a>${text}</h${depth}>`;
       };
       renderer.code = function({ text, lang }) {
         const language = lang || '';
-        const validLang = language && hljs.getLanguage(language) ? language : '';
-        const highlighted = validLang ? hljs.highlight(text, { language: validLang }).value : escapeHtml(text);
-        return `<pre data-language="${language}"><code class="hljs${validLang?' language-'+validLang:''}">${highlighted}</code></pre>`;
+        let highlighted = escapeHtml(text);
+        let cls = '';
+        if (typeof hljs !== 'undefined' && language) {
+          try {
+            const validLang = hljs.getLanguage(language) ? language : '';
+            if (validLang) {
+              highlighted = hljs.highlight(text, { language: validLang }).value;
+              cls = ' language-' + validLang;
+            }
+          } catch (e) {}
+        }
+        return `<pre data-language="${language}"><code class="hljs${cls}">${highlighted}</code></pre>`;
       };
       renderer.link = function({ href, tokens }) {
         const isExternal = href && (href.startsWith('http://') || href.startsWith('https://'));
         return `<a href="${href}"${isExternal?' target="_blank" rel="noopener noreferrer"':''}>${this.parser.parseInline(tokens)}</a>`;
       };
       marked.use({ renderer, breaks: true, gfm: true });
-      docBody.innerHTML = marked.parse(md);
-      generateTOC(docBody);
+      let html = marked.parse(md);
+      html = html.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '<img src="$2" alt="$1" style="max-width:100%;display:block">');
+
+      // Safari WebView blocks images loaded via innerHTML on a live node.
+      // Workaround: parse HTML in a detached node, then move children.
+      const temp = document.createElement('div');
+      temp.innerHTML = html;
+      docBody.replaceChildren(...temp.childNodes);
+
+      try { generateTOC(docBody); } catch (e) {}
 
       const readingTime = getReadingTime(rawText);
       const dateStr = config.date || new Date().toISOString().split('T')[0];
@@ -274,7 +292,7 @@
   }
 
   function waitForDeps() {
-    if (typeof marked !== 'undefined' && typeof hljs !== 'undefined') init();
+    if (typeof marked !== 'undefined') init();
     else setTimeout(waitForDeps, 100);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', waitForDeps);
