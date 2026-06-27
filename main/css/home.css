@@ -1,7 +1,7 @@
 /* ============================================
    Blog Home Page Styles
    ============================================ */
-   
+
 /* Override content-wrapper flex direction for home page */
 #homeView {
   flex-direction: column;
@@ -30,11 +30,13 @@
   background: radial-gradient(ellipse at 50% 0%, var(--md-sys-color-primary-container) 0%, transparent 60%);
   opacity: 0.35;
   pointer-events: none;
+  animation: hero-glow-pulse 4s ease-in-out infinite;
 }
 
 .blog-hero__icon {
   margin-bottom: 24px;
   position: relative;
+  animation: hero-icon-float 3s ease-in-out infinite;
 }
 
 .blog-hero__icon svg {
@@ -52,9 +54,36 @@
 
 .blog-hero__title .gradient-text {
   background: linear-gradient(135deg, var(--md-sys-color-primary), #7FC8F8, var(--md-sys-color-tertiary));
+  background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: gradient-shift 8s ease-in-out infinite;
+}
+
+/* --- Ambient Hero Animations --- */
+@keyframes hero-icon-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes hero-glow-pulse {
+  0%, 100% { opacity: 0.28; }
+  50% { opacity: 0.42; }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .blog-hero__icon,
+  .blog-hero::before,
+  .blog-hero__title .gradient-text {
+    animation: none;
+  }
 }
 
 .blog-hero__subtitle {

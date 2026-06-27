@@ -1,0 +1,118 @@
+/* ============================================
+   Expand Test — 外观扩展示例
+   ============================================ */
+
+/* 给导航栏的品牌名加一个渐变光晕 */
+.floating-nav__brand-name {
+  text-shadow: 0 0 20px rgba(127, 200, 248, 0.3);
+}
+
+/* 文章卡片左边框的渐变色微调 */
+.post-card::before {
+  background: linear-gradient(180deg, #7FC8F8, var(--md-sys-color-primary), var(--md-sys-color-tertiary)) !important;
+}
+
+/* 扩展加载的页面专属样式 */
+.ext-page-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+
+.ext-page-container h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--md-sys-color-primary);
+}
+
+.ext-page-container h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  margin: 28px 0 12px;
+}
+
+.ext-page-container p {
+  font-size: 15px;
+  color: var(--md-sys-color-on-surface-variant);
+  line-height: 1.75;
+  margin-bottom: 12px;
+}
+
+.ext-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--md-sys-shape-full);
+  background: linear-gradient(135deg, var(--md-sys-color-primary-container), var(--md-sys-color-tertiary-container));
+  color: var(--md-sys-color-on-primary-container);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.ext-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.ext-feature-card {
+  padding: 20px;
+  border-radius: var(--md-sys-shape-large);
+  background-color: var(--md-sys-color-surface-container-low);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  transition: all 0.2s ease;
+}
+
+.ext-feature-card:hover {
+  background-color: var(--md-sys-color-surface-container);
+  border-color: var(--md-sys-color-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--md-sys-elevation-2);
+}
+
+.ext-feature-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: 6px;
+}
+
+.ext-feature-card p {
+  font-size: 13px;
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0;
+}
+
+.ext-code-block {
+  background: var(--md-sys-color-surface-container-highest);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-left: 3px solid var(--md-sys-color-primary);
+  border-radius: var(--md-sys-shape-medium);
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--md-sys-color-on-surface);
+  overflow-x: auto;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Reset inner pre elements to inherit code block styles */
+.ext-code-block pre {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  white-space: pre-wrap;
+}

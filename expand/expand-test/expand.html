@@ -1,0 +1,497 @@
+<!--
+  ============================================================
+  EXTENSION SYSTEM — Developer Guide
+  ============================================================
+  Target audience: Human developers and AI coding assistants
+  (VibeCoding, Cursor, Copilot, etc.)
+
+  This file is both a working extension page AND a reference
+  guide. Read it to understand how to build your own extension.
+  ============================================================
+-->
+
+<div class="ext-page-container">
+
+  <!-- Header Badge -->
+  <span class="ext-badge">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+    扩展系统 v1.0 — 开发者指南
+  </span>
+
+  <h2>✨ 扩展系统开发者指南</h2>
+
+  <p>本页面既是一个<strong>可运行的扩展示例</strong>，也是一份<strong>完整的开发文档</strong>。阅读本文档后，你将能够为博客创建任意类型的扩展：外观主题、新页面、交互功能。</p>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 1: Quick Start -->
+  <!-- ============================================================ -->
+  <h3>🚀 快速开始（5 分钟上手）</h3>
+
+  <p>创建一个最简扩展只需 <strong>3 个文件</strong>：</p>
+
+  <div class="ext-code-block"><pre><strong>步骤 1 — 创建目录和配置文件</strong>
+    
+    expand/my-ext/config.json:
+    {
+      "name": "My Extension",
+      "version": "1.0.0",
+      "type": "theme",
+      "css": ["style.css"]
+    }</pre></div>
+
+  <div class="ext-code-block"><pre><strong>步骤 2 — 编写样式</strong>
+    
+    expand/my-ext/style.css:
+    :root { --md-sys-color-primary: #FF6B6B; }</pre></div>
+
+  <div class="ext-code-block"><pre><strong>步骤 3 — 启用扩展</strong>
+    
+    编辑 expand/config.json，添加：
+    "my-ext": { "enabled": true }</pre></div>
+
+  <p>刷新页面即可看到效果。就是这么简单。</p>
+
+
+  <!-- ============================================================ -->
+  <!-- SECTION 2: Architecture -->
+  <!-- ============================================================ -->
+  <h3>📁 完整目录结构</h3>
+
+  <div class="ext-code-block"><pre>Blog/                          ← 站点根目录
+├── expand/                    ← 扩展根目录
+│   ├── config.json            ← 【总控】启用/禁用所有扩展
+│   ├── expand-test/           ← 示例扩展（你正在看的）
+│   │   ├── config.json        ← 【定义】扩展的名称/文件/页面
+│   │   ├── expand.css         ← 外观样式（可多文件）
+│   │   └── expand.html        ← 扩展页面（可多页面）
+│   ├── my-theme/              ← 你的扩展目录
+│   │   ├── config.json
+│   │   ├── dark.css
+│   │   └── home.html
+│   └── my-widget/             ← 另一个扩展
+│       ├── config.json
+│       ├── widget.js
+│       └── widget.html
+├── main/                      ← 站点核心代码（勿修改）
+│   ├── js/extensions.js       ← 扩展加载器
+│   ├── css/                   ← 站点样式
+│   └── ...
+└── page/                      ← 博客文章 (.md)</pre></div>
+
+  <p><strong>重要：</strong>每个扩展有独立的子目录。扩展之间不会互相干扰。扩展加载顺序由 <code>expand/config.json</code> 中的键顺序决定。</p>
+
+
+  <!-- ============================================================ -->
+  <!-- SECTION 3: Config Schema -->
+  <!-- ============================================================ -->
+  <h3>📋 配置文件 Schema（供 AI 解析）</h3>
+
+  <h4>3.1 总控文件：expand/config.json</h4>
+
+  <div class="ext-code-block"><pre>{
+    "extensions": {
+      "<strong>扩展目录名</strong>": {
+        "enabled": true | false
+      }
+    }
+  }</pre></div>
+
+  <div class="ext-code-block"><pre><strong>示例：</strong>
+  {
+    "extensions": {
+      "my-theme":   { "enabled": true },
+      "my-widget":  { "enabled": false }
+    }
+  }</pre></div>
+
+  <h4>3.2 扩展定义文件：expand/{目录名}/config.json</h4>
+
+  <div class="ext-code-block"><pre>{
+    "<strong>name</strong>":         "扩展显示名称",
+    "<strong>description</strong>":  "功能描述",
+    "<strong>version</strong>":      "1.0.0",
+    "<strong>type</strong>":         "theme" | "page" | "both",
+    "<strong>css</strong>": [
+      "style.css",
+      "dark-theme.css"
+    ],
+    "<strong>scripts</strong>": [
+      "widget.js"
+    ],
+    "<strong>pages</strong>": [
+      {
+        "<strong>file</strong>":      "guide.html",
+        "<strong>title</strong>":     "完整页面标题",
+        "<strong>navTitle</strong>":  "导航简称",
+        "<strong>icon</strong>":      "code",
+        "<strong>tags</strong>":      ["教程", "扩展"],
+        "<strong>date</strong>":      "2026-06-27",
+        "<strong>excerpt</strong>":   "页面摘要描述"
+      },
+      {
+        "<strong>file</strong>":      "about.html",
+        "<strong>title</strong>":     "关于此扩展",
+        "<strong>navTitle</strong>":  "关于",
+        "<strong>icon</strong>":      "book"
+      }
+    ]
+  }</pre></div>
+
+  <div class="ext-code-block"><pre><strong>字段说明：</strong>
+  css[]         — 文件路径相对于扩展目录。支持任意数量的 CSS 文件。
+  scripts[]     — 文件路径相对于扩展目录。脚本以 defer 方式加载。
+  pages[]       — 每个页面对象定义一个可导航的 HTML 页面。
+  pages[].file  — 页面路由为 /ext/{扩展目录名}/{此文件名}
+  pages[].icon  — 可选值见下方「可用图标」
+  pages[].tags  — 首页的分类卡片和标签筛选会自动包含这些标签</pre></div>
+
+  <p>如果只做外观扩展，只需填写 <code>css</code> 字段。如果只做页面扩展，只需填写 <code>pages</code> 字段。两者都填就是 <code>"type": "both"</code>。</p>
+
+
+  <!-- ============================================================ -->
+  <!-- SECTION 4: Development Guides -->
+  <!-- ============================================================ -->
+  <h3>🎨 外观扩展开发</h3>
+
+  <p>外观扩展通过加载 CSS 文件来修改站点的视觉风格。CSS 会以 <code>&lt;link&gt;</code> 标签注入到页面 <code>&lt;head&gt;</code> 中。</p>
+
+  <div class="ext-feature-grid">
+    <div class="ext-feature-card">
+      <h4>修改主题色</h4>
+      <p>覆盖 <code>--md-sys-color-primary</code> 等 CSS 变量</p>
+    </div>
+    <div class="ext-feature-card">
+      <h4>自定义字体</h4>
+      <p>加载 Google Fonts 并设置 <code>body</code> 的 <code>font-family</code></p>
+    </div>
+    <div class="ext-feature-card">
+      <h4>调整布局</h4>
+      <p>修改 <code>.blog-hero</code>、<code>.post-card</code> 等布局类</p>
+    </div>
+    <div class="ext-feature-card">
+      <h4>添加动画</h4>
+      <p>定义 <code>@keyframes</code> 并应用到页面元素</p>
+    </div>
+  </div>
+
+  <div class="ext-code-block"><pre><strong>示例：将一个 CSS 文件改为深色主题</strong>
+  expand/my-dark-theme/dark.css:
+
+  /* 覆盖表面颜色为深色 */
+  :root, [data-theme="light"] {
+    --md-sys-color-surface: #1a1a2e;
+    --md-sys-color-on-surface: #e0e0e0;
+    --md-sys-color-surface-container: #16213e;
+    --md-sys-color-surface-container-low: #0f3460;
+    --md-sys-color-primary: #e94560;
+    --md-sys-color-on-primary: #ffffff;
+  }
+
+  /* 修改卡片样式 */
+  .post-card {
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(233,69,96,0.2);
+  }</pre></div>
+
+  <p><strong>提示：</strong>站点使用 Material Design 3 设计令牌（CSS 自定义属性）。你可以在浏览器的 DevTools 中查看 <code>:root</code> 和 <code>[data-theme="dark"]</code> 下的所有可用变量。所有变量名以 <code>--md-sys-color-</code> 开头。</p>
+
+
+  <h3>📄 页面扩展开发</h3>
+
+  <p>页面扩展添加全新可导航的 HTML 页面。内容通过 AJAX 加载到文章视图容器中（<code>#docBody</code>），站点导航栏和侧边栏自动包含你的页面链接。</p>
+
+  <div class="ext-code-block"><pre><strong>页面 HTML 规范</strong>
+  你的 HTML 不需要 &lt;html&gt;、&lt;head&gt;、&lt;body&gt; 标签。
+  直接写内容即可，它会被注入到 #docBody 容器内。
+
+  &lt;div class="ext-page-container"&gt;
+    &lt;h2&gt;我的扩展页面&lt;/h2&gt;
+    &lt;p&gt;页面内容...&lt;/p&gt;
+
+    &lt;div class="ext-feature-grid"&gt;
+      &lt;div class="ext-feature-card"&gt;
+        &lt;h4&gt;卡片标题&lt;/h4&gt;
+        &lt;p&gt;卡片内容&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class="ext-code-block"&gt;
+      代码块内容
+    &lt;/div&gt;
+
+    &lt;span class="ext-badge"&gt;标签&lt;/span&gt;
+  &lt;/div&gt;</pre></div>
+
+  <p><strong>可用的预定义 CSS 类：</strong></p>
+
+  <table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:14px;">
+    <tr style="background:var(--md-sys-color-surface-container-high);">
+      <th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--md-sys-color-outline-variant);">类名</th>
+      <th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--md-sys-color-outline-variant);">用途</th>
+    </tr>
+    <tr>
+      <td style="padding:8px 12px;border-bottom:1px solid var(--md-sys-color-outline-variant);"><code>.ext-page-container</code></td>
+      <td style="padding:8px 12px;border-bottom:1px solid var(--md-sys-color-outline-variant);">扩展页面外层容器（推荐使用）</td>
+    </tr>
+    <tr>
+      <td style="padding:8px 12px;border-bottom:1px solid var(--md-sys-color-outline-variant);"><code>.ext-feature-grid</code></td>
+      <td style="padding:8px 12px;border-bottom:1px solid var(--md-sys-color-outline-variant);">响应式卡片网格（2-4 列自动适配）</td>
+    </tr>
+    <tr>
+      <td style="padding:8px 12px;border-bottom:1px solid var(--md-sys-color-outline-variant);"><code>.ext-feature-card</code></td>
+      <td style="padding:8px 12px;border-bottom:1px solid var(--md-sys-color-outline-variant);">带悬停效果的 MD3 风格卡片</td>
+    </tr>
+    <tr>
+      <td style="padding:8px 12px;border-bottom:1px solid var(--md-sys-color-outline-variant);"><code>.ext-code-block</code></td>
+      <td style="padding:8px 12px;border-bottom:1px solid var(--md-sys-color-outline-variant);">等宽字体代码展示块</td>
+    </tr>
+    <tr>
+      <td style="padding:8px 12px;border-bottom:1px solid var(--md-sys-color-outline-variant);"><code>.ext-badge</code></td>
+      <td style="padding:8px 12px;border-bottom:1px solid var(--md-sys-color-outline-variant);">胶囊形状态/版本标签</td>
+    </tr>
+  </table>
+
+  <p>你也可以使用站点自带的任何 MD3 类，如 <code>.post-card</code>、<code>.post-card__tag</code>、<code>.empty-state</code> 等。</p>
+
+
+  <h3>⚡ 脚本扩展开发</h3>
+
+  <p>通过 <code>scripts</code> 字段加载自定义的 JavaScript。脚本以 <code>defer</code> 方式加载，不阻塞页面渲染。</p>
+
+  <div class="ext-code-block"><pre><strong>示例：添加一个浮动按钮</strong>
+  expand/my-widget/widget.js:
+
+  (function() {
+    'use strict';
+
+    // 创建浮动按钮
+    const btn = document.createElement('button');
+    btn.textContent = '💬';
+    btn.style.cssText =
+      'position:fixed;bottom:100px;right:24px;' +
+      'width:56px;height:56px;border-radius:50%;' +
+      'border:none;font-size:24px;cursor:pointer;' +
+      'z-index:50;box-shadow:var(--md-sys-elevation-3);' +
+      'background:var(--md-sys-color-primary-container);' +
+      'color:var(--md-sys-color-on-primary-container);';
+
+    btn.onclick = () => alert('Hello from extension!');
+    document.body.appendChild(btn);
+  })();</pre></div>
+
+  <p><strong>全局对象参考：</strong>扩展系统在 <code>window.__EXTENSIONS</code> 上暴露了以下数据：</p>
+
+  <div class="ext-code-block"><pre>window.__EXTENSIONS = {
+    loaded: [],      // 已加载的扩展列表 [{ id, config }]
+    pages:  {},      // 已注册的扩展页面 { 'ext-id/file': { route, title, ... } }
+    styles: []       // 已注入的 CSS &lt;link&gt; 元素列表
+  };</pre></div>
+
+  <p>脚本可以使用站点已加载的任何库：Marked.js（Markdown 渲染）、Highlight.js（代码高亮）。</p>
+
+
+  <!-- ============================================================ -->
+  <!-- SECTION 5: Icon Reference -->
+  <!-- ============================================================ -->
+  <h3>🎯 可用图标</h3>
+
+  <p>在 <code>pages[].icon</code> 字段中使用以下值：</p>
+
+  <div class="ext-code-block"><pre>"code"    → 代码图标 &lt;/&gt;
+"book"    → 书本/文章图标
+"puzzle"  → 拼图（扩展默认图标）
+"home"    → 首页图标
+"globe"   → 地球/网络图标</pre></div>
+
+
+  <!-- ============================================================ -->
+  <!-- SECTION 6: Examples -->
+  <!-- ============================================================ -->
+  <h3>📦 完整扩展示例</h3>
+
+  <div class="ext-feature-grid">
+    <div class="ext-feature-card">
+      <h4>示例 1：纯主题扩展</h4>
+      <p>只有 CSS，修改站点颜色</p>
+      <div class="ext-code-block" style="font-size:12px;margin:8px 0 0;"><pre>// config.json
+{ "name": "My Dark Theme",
+  "version": "1.0",
+  "type": "theme",
+  "css": ["dark.css"] }
+
+// expand/config.json
+"my-dark-theme": { "enabled": true }</pre></div>
+    </div>
+    <div class="ext-feature-card">
+      <h4>示例 2：纯页面扩展</h4>
+      <p>只有 HTML 页面，添加新内容</p>
+      <div class="ext-code-block" style="font-size:12px;margin:8px 0 0;"><pre>// config.json
+{ "name": "My Page Pack",
+  "version": "1.0",
+  "type": "page",
+  "pages": [
+    { "file": "intro.html",
+      "title": "简介",
+      "navTitle": "简介",
+      "icon": "book",
+      "tags": ["指南"] }
+  ] }
+
+// expand/config.json
+"my-page-pack": { "enabled": true }</pre></div>
+    </div>
+    <div class="ext-feature-card">
+      <h4>示例 3：完整扩展</h4>
+      <p>CSS + 页面 + 脚本</p>
+      <div class="ext-code-block" style="font-size:12px;margin:8px 0 0;"><pre>// config.json
+{ "name": "Full Extension",
+  "version": "1.0",
+  "type": "both",
+  "css": ["theme.css", "extra.css"],
+  "scripts": ["widget.js"],
+  "pages": [
+    { "file": "main.html",
+      "title": "功能页",
+      "navTitle": "功能",
+      "icon": "puzzle",
+      "tags": ["工具"],
+      "date": "2026-06-27",
+      "excerpt": "功能描述" },
+    { "file": "help.html",
+      "title": "帮助页面",
+      "navTitle": "帮助",
+      "icon": "book",
+      "tags": ["帮助"] }
+  ] }
+
+// expand/config.json
+"full-extension": { "enabled": true }</pre></div>
+    </div>
+    <div class="ext-feature-card">
+      <h4>示例 4：脚本小部件</h4>
+      <p>纯 JS，添加交互功能</p>
+      <div class="ext-code-block" style="font-size:12px;margin:8px 0 0;"><pre>// config.json
+{ "name": "Snow Effect",
+  "version": "1.0",
+  "type": "widget",
+  "scripts": ["snowfall.js"] }
+
+// expand/config.json
+"snow-effect": { "enabled": true }</pre></div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================ -->
+  <!-- SECTION 7: AI 开发指南 -->
+  <!-- ============================================================ -->
+  <h3>🤖 AI 开发指南（供 VibeCoding/Copilot/Cursor 等）</h3>
+
+  <p>如果你是一个 AI 编程助手（如 VibeCoding），请遵循以下规范来为用户创建扩展：</p>
+
+  <div class="ext-code-block"><pre><strong>## AI Agent Instructions for Extension Development</strong>
+
+<strong>### 1. When user asks to create an extension:</strong>
+  - Create a new directory under expand/ with a short kebab-case name
+  - Create config.json following the schema in Section 3.2
+  - Create the required CSS/HTML/JS files
+  - Update expand/config.json to enable it
+
+<strong>### 2. config.json minimum fields:</strong>
+  { "name": "...", "version": "1.0.0", "type": "theme|page|both", ... }
+
+<strong>### 3. CSS guidelines:</strong>
+  - Use MD3 CSS custom properties (--md-sys-color-*) for theming
+  - Prefix custom classes with ext- to avoid conflicts
+  - Only include necessary overrides, don't duplicate site styles
+  - File path in css[] is relative to the extension directory
+
+<strong>### 4. HTML page guidelines:</strong>
+  - Do NOT include &lt;html&gt;, &lt;head&gt;, or &lt;body&gt; tags
+  - Wrap content in &lt;div class="ext-page-container"&gt;
+  - Use semantic HTML: h2, h3, p, ul, ol, code, table
+  - Available icons: "code", "book", "puzzle", "home", "globe"
+
+<strong>### 5. JS guidelines:</strong>
+  - Wrap in IIFE: (function() { 'use strict'; ... })();
+  - Access extension system via window.__EXTENSIONS
+  - Available libraries: marked, hljs (may not be on all pages)
+  - Be defensive: check element existence before manipulation
+
+<strong>### 6. After creating files, update expand/config.json:</strong>
+  {
+    "extensions": {
+      "existing-ext": { "enabled": true },
+      "new-ext":      { "enabled": true }   ← add this line
+    }
+  }
+
+<strong>### 7. File naming conventions:</strong>
+  - config.json (required, lowercase)
+  - CSS files: lowercase, hyphenated, .css extension
+  - HTML files: lowercase, hyphenated, .html extension
+  - JS files: lowercase, hyphenated, .js extension</pre></div>
+
+
+  <!-- ============================================================ -->
+  <!-- SECTION 8: Troubleshooting -->
+  <!-- ============================================================ -->
+  <h3>🔧 常见问题排查</h3>
+
+  <div class="ext-feature-grid">
+    <div class="ext-feature-card">
+      <h4>扩展没生效？</h4>
+      <p>① 检查 expand/config.json 中 enabled 是否为 true<br>
+         ② 打开浏览器控制台查看 [Extensions] 日志<br>
+         ③ 确认目录名与 config 中的键完全一致<br>
+         ④ 确认扩展的 config.json 是合法的 JSON</p>
+    </div>
+    <div class="ext-feature-card">
+      <h4>CSS 不生效？</h4>
+      <p>① 检查选择器优先级，可能需要 !important<br>
+         ② 确认 CSS 文件路径没有拼写错误<br>
+         ③ 在 DevTools 的 Elements 面板查看是否加载<br>
+         ④ 确认修改的是正确的 CSS 变量名</p>
+    </div>
+    <div class="ext-feature-card">
+      <h4>页面 404？</h4>
+      <p>① 确认 HTML 文件存在于扩展目录下<br>
+         ② 确认文件名与 config 中完全一致<br>
+         ③ 路由格式：page.html#/ext/{扩展目录名}/{文件名}<br>
+         ④ 检查浏览器 Network 面板</p>
+    </div>
+    <div class="ext-feature-card">
+      <h4>脚本不执行？</h4>
+      <p>① 检查控制台是否有 JS 错误<br>
+         ② 确认 scripts 数组中的文件名正确<br>
+         ③ 脚本以 defer 加载，检查 DOM 就绪状态<br>
+         ④ 检查是否依赖了未加载的库</p>
+    </div>
+  </div>
+
+
+  <!-- ============================================================ -->
+  <!-- SECTION 9: Tips -->
+  <!-- ============================================================ -->
+  <h3>💡 进阶技巧</h3>
+
+  <ol style="margin-left:20px;color:var(--md-sys-color-on-surface-variant);line-height:2.2;">
+    <li><strong>CSS 层叠顺序：</strong>后加载的扩展 CSS 会覆盖先加载的。扩展 CSS 在站点核心样式之后加载，天然具有更高优先级。</li>
+    <li><strong>深色/浅色主题：</strong>使用 <code>[data-theme="dark"]</code> 选择器来分别定义深浅色主题的样式。</li>
+    <li><strong>响应式设计：</strong>在 CSS 中使用 <code>@media (max-width: 768px)</code> 适配移动端。</li>
+    <li><strong>页面中加载图片：</strong>图片路径使用相对于站点根目录的路径，如 <code>/expand/my-ext/logo.png</code>。</li>
+    <li><strong>多个 CSS 文件：</strong>如果想模块化管理样式，可以在 <code>css</code> 数组中列出多个文件，按顺序加载。</li>
+    <li><strong>调试模式：</strong>打开浏览器控制台，以 <code>[Extensions]</code> 开头的日志会显示扩展加载状态。</li>
+    <li><strong>禁用扩展：</strong>无需删除文件，只需在 <code>expand/config.json</code> 中将 <code>enabled</code> 改为 <code>false</code> 即可。</li>
+  </ol>
+
+
+  <!-- ============================================================ -->
+  <!-- Footer -->
+  <!-- ============================================================ -->
+  <p style="margin-top:32px;padding:20px;border-radius:12px;background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container);font-size:14px;line-height:1.8;">
+    <strong>💡 现在就开始：</strong>复制 <code>expand-test/</code> 目录，改名为你的扩展名，修改 <code>config.json</code> 中的内容，然后刷新页面即见效果。<br><br>
+    <strong>🤝 兼容性：</strong>扩展系统使用标准 Web API（<code>fetch</code>、<code>DOM</code>、<code>CSS</code>），无需安装任何工具或框架。所有现代浏览器均支持。
+  </p>
+
+</div>

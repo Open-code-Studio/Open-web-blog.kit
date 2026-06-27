@@ -69,6 +69,7 @@
   align-items: center;
   gap: 2px;
   flex-shrink: 0;
+  position: relative;
 }
 
 .floating-nav__link {
@@ -81,8 +82,11 @@
   font-weight: 500;
   color: var(--md-sys-color-on-surface-variant);
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: color 0.2s ease;
   white-space: nowrap;
+  position: relative;
+  z-index: 1;
+  background: transparent;
 }
 
 .floating-nav__link:hover {
@@ -92,8 +96,29 @@
 }
 
 .floating-nav__link.active {
-  background-color: var(--md-sys-color-secondary-container);
   color: var(--md-sys-color-on-secondary-container);
+  background: transparent;
+}
+
+/* === Nav Slider: animated indicator pill === */
+.nav-slider {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 0;
+  width: 0;
+  border-radius: var(--md-sys-shape-full);
+  background-color: var(--md-sys-color-secondary-container);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: left 0.35s cubic-bezier(0.05, 0.7, 0.1, 1),
+              width 0.35s cubic-bezier(0.05, 0.7, 0.1, 1),
+              opacity 0.2s ease;
+}
+
+.nav-slider.ready {
+  opacity: 1;
 }
 
 .floating-nav__link svg {

@@ -1,0 +1,154 @@
+/* ============================================
+   Page Transitions - Slide + Stagger
+   ============================================ */
+
+/* Prevent scroll during transition */
+body.is-exiting,
+body.is-entering {
+  overflow: hidden;
+}
+
+/* === Exit Animation: slide out to left === */
+body.is-exiting .main-content {
+  animation: slide-out-left 260ms cubic-bezier(0.4, 0, 0.6, 1) forwards;
+}
+
+body.is-exiting .floating-nav {
+  animation: nav-fade-out 160ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+body.is-exiting .fab {
+  animation: fab-fade-out 160ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes slide-out-left {
+  to {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+}
+
+@keyframes nav-fade-out {
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-6px);
+  }
+}
+
+@keyframes fab-fade-out {
+  to {
+    opacity: 0;
+    transform: translateY(12px) scale(0.85);
+  }
+}
+
+/* === Entrance Animation: slide in === */
+
+/* Nav slides in from top (same for both directions) */
+.page-entering .floating-nav {
+  animation: nav-enter 380ms 60ms cubic-bezier(0, 0, 0.2, 1) both;
+}
+
+@keyframes nav-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Forward: slide in from the RIGHT */
+.page-entering[data-slide="right"] .main-content {
+  animation: slide-in-right 420ms 80ms cubic-bezier(0.05, 0.7, 0.1, 1) both;
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Backward: slide in from the LEFT */
+.page-entering[data-slide="left"] .main-content {
+  animation: slide-in-left 420ms 80ms cubic-bezier(0.05, 0.7, 0.1, 1) both;
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* FAB bounces in */
+.page-entering .fab {
+  animation: fab-enter 400ms 500ms cubic-bezier(0.05, 0.7, 0.1, 1) both;
+}
+
+@keyframes fab-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* === Stagger Item: each section reveals in sequence === */
+.stagger-item {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 420ms cubic-bezier(0, 0, 0.2, 1),
+              transform 420ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.stagger-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* === Post card stagger variant: slight scale + fade === */
+.post-card.stagger-item {
+  transform: translateY(16px) scale(0.97);
+}
+
+.post-card.stagger-item.visible {
+  transform: translateY(0) scale(1);
+}
+
+/* === Smooth internal scroll for hash links === */
+html.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+/* === Reduced motion === */
+@media (prefers-reduced-motion: reduce) {
+  body.is-exiting .main-content,
+  body.is-exiting .floating-nav,
+  body.is-exiting .fab,
+  .page-entering .floating-nav,
+  .page-entering .main-content,
+  .page-entering .fab {
+    animation: none;
+  }
+
+  .stagger-item {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "Expand Test",
+  "description": "一个展示扩展系统能力的示例扩展",
+  "version": "1.0.0",
+  "type": "both",
+  "css": [
+    "expand.css"
+  ],
+  "pages": [
+    {
+      "file": "expand.html",
+      "title": "✨ 扩展测试",
+      "navTitle": "扩展页面",
+      "icon": "code",
+      "tags": ["扩展"],
+      "date": "2026-06-27",
+      "excerpt": "这是一个通过扩展系统加载的示例页面，展示了扩展的完整能力。"
+    }
+  ],
+  "scripts": []
+}

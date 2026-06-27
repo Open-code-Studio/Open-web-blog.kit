@@ -252,6 +252,8 @@
   function handleRoute() {
     const hash = window.location.hash.slice(1);
     if (hash && hash.startsWith('/')) {
+      // Skip extension routes — handled by extensions.js
+      if (hash.startsWith('/ext/')) return;
       loadArticle(hash);
     } else if (!hash) {
       // No hash = default first article
